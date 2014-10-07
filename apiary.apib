@@ -1,0 +1,352 @@
+FORMAT: 1A
+HOST: http://localhost:8080/vic/resources
+
+# VIC API
+Hello, my name is **VIC**, how are you? ;-)
+
+I'm a Very Important Customer as I can order and pay my croissants on a late Sunday morning via my smartphone, walk into the bakery and get my yummy bag right away. You should have seen those 30 faces in the queue! But hey, that's me, VIC is the name! :-)
+
+Of course I could also order some bread some days in advance with that app, but that would make me less important and definitely less cool ;-) 
+
+So in short... **VIC API** is the service for *Very Important Customers* :-)
+
+## Authentication
+Currently the VIC API is in proof of concept and is not yet providing authenticated access.
+
+## Media Types
+This api supports only `application/json` as media-type for both request as response payloads
+
+## Error States
+This API uses the common [HTTP Response Status Codes](https://github.com/for-GET/know-your-http-well/blob/master/status-codes.md) in the following structure for error handling:
+
+There are three possible types of client errors on API calls that
+receive request bodies:
+
+1. Sending invalid JSON will result in a `400 Bad Request` response.
+
+        HTTP/1.1 400 Bad Request
+        Content-Length: 35
+
+        {"message":"Problems parsing JSON"}
+
+2. Sending the wrong elements will result in a `400 Bad Request` response.
+
+        HTTP/1.1 400 Bad Request
+        Content-Length: 40
+
+        {"message":"Body should be a JSON Hash"}
+
+3. Sending a request with missing mandatory elements or invalid values will result in a `422 Unprocessable Entity` response.
+
+        HTTP/1.1 422 Unprocessable Entity
+        Content-Length: 284
+
+        {
+          "message": "Validation Failed",
+          "errors": [
+            {
+              "resource": "Merchant",
+              "field": "officialName",
+              "code": "missing_field"
+            },
+            {
+              "resource": "Merchant",
+              "field": "contactInfo.address.street",
+              "code": "invalid"
+            }
+          ]
+        }
+
+All error objects have resource and field properties so that our client
+can tell what the problem is.  There's also an error code to let you
+know what is wrong with the field.  These are the possible validation error
+codes:
+
+Error Name | Description
+-----------|-----------|
+`missing_field` | This means a required field on a resource has not been set.
+`invalid` | This means the formatting of a field is invalid.  The documentation for that resource should be able to give you more specific information.
+
+If resources have custom validation errors, they will be documented with the resource.
+
+Furthermore the normal HTTP codes will be applied. Noteworthy
+
+HTTP code | Condition 
+----------|----------
+`204` | Will be returned for an update/delete operation (empty body, links in headers)
+`404` | Will be returned if a specific resource cannot be found. For list resources however a `HTTP 200` with an empty list will be returned if no data can be found
+`410` | Will be returned if a specific resource has been soft-deleted and is not available for the requested opertation
+
+# Group Merchants
+Merchant related resources of the **Merchants API**
+
+## Individual Merchant [/merchants/{id}]
+A single Merchant resource to operate with.
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the Merchant to perform action with. Has example value.
+
++ Model (application/json)
+
+    ```js
+        {
+          "type": "BAKERY",
+          "officialName": "official name UPDATED",
+          "commercialName": "commercial name",
+          "contactInfo": {
+            "address": {
+              "street": "street",
+              "number": "nbr",
+              "zipCode": "zip",
+              "municipality": "municipality",
+              "country": "BE"
+            },
+            "telephone": "tel",
+            "fax": "fax",
+            "email": "email",
+            "twitter": "twitter",
+            "facebook": "facebook"
+          },
+          "vatNumber": "BE 0123.456.789",
+          "lang": "NL",
+          "currency": "EURO"
+        }
+    ```
+
+### Retrieve a Merchant [GET]
++ Response 200 (application/json)
+
+    + Body
+
+            {
+              "content": {
+                "id": 1,
+                "type": "BAKERY",
+                "officialName": "official name",
+                "commercialName": "commercialName",
+                "contactInfo": {
+                  "id": 9,
+                  "address": {
+                    "street": "street",
+                    "number": "nbr",
+                    "zipCode": "zip",
+                    "municipality": "municipality",
+                    "country": "BE"
+                  },
+                  "telephone": "tel",
+                  "fax": "fax",
+                  "email": "email",
+                  "twitter": "twitter",
+                  "facebook": "facebook"
+                },
+                "vatNumber": "BE 0123.456.789",
+                "lang": "NL",
+                "currency": "EURO"
+              },
+              "_links": [
+                {
+                  "rel": "self",
+                  "href": "http://localhost:8080/vic/resources/merchants/1",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "edit",
+                  "href": "http://localhost:8080/vic/resources/merchants/1",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "delete",
+                  "href": "http://localhost:8080/vic/resources/merchants/1",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "list",
+                  "href": "http://localhost:8080/vic/resources/merchants",
+                  "type": "application/json"
+                }
+              ]
+            }
+            
+### Update a Merchant [PUT]
+See the *Create a Merchant* documentation section for the request payload details.
+
++ Request
+
+    [Individual Merchant][]
+
++ Response 204 (application/json)
+
+    + Headers
+    
+            Link: <http<s>://<host>/vic/resources/merchants/1>;rel="self", <http<s>://<host>/vic/resources/merchants>; rel="list"
+
+### Delete a Merchant [DELETE]
+
+
++ Response 204 (application/json)
+
+    + Headers
+    
+            Link: <http<s>://<host>/vic/resources/merchants>; rel="list"
+
+## Merchants Collection [/merchants{?start,size}]
+
+### List all Merchants [GET]
+This will return a subset of the merchant info. The full details can be retrieved via the id of each merchant (see Retrieve a Merchant operation).
+Pagination can be applied via the query parameters `start`and `size`.
+
+The response will have optionally `previous` and/or `next` links in the `_links` section, depending on the number of results and the given query parameters in the request.
+
++ Parameters
+    + start (optional, number, `10`) ... Numeric `start` indiating the offset in the result set. Default is 0
+    + size (optional, number, `10`) ... Numeric `size` indicating the number of elements to be returned. Default is 10
+
++ Response 200 (application/json)
+    
+    + Body
+        
+            {
+              "content": [
+                {
+                  "content": {
+                    "id": 6,
+                    "officialName": "official name",
+                    "commercialName": "commercialName",
+                    "address": {
+                      "zipCode": "zip",
+                      "municipality": "municipality"
+                    }
+                  },
+                  "_links": [
+                    {
+                      "rel": "self",
+                      "href": "http://localhost:8080/vic/resources/merchants/6",
+                      "type": "application/json"
+                    },
+                    {
+                      "rel": "edit",
+                      "href": "http://localhost:8080/vic/resources/merchants/6",
+                      "type": "application/json"
+                    },
+                    {
+                      "rel": "delete",
+                      "href": "http://localhost:8080/vic/resources/merchants/6",
+                      "type": "application/json"
+                    }
+                  ]
+                },
+                {
+                  "content": {
+                    "id": 8,
+                    "officialName": "official name",
+                    "commercialName": "commercialName",
+                    "address": {
+                      "zipCode": "zip",
+                      "municipality": "municipality"
+                    }
+                  },
+                  "_links": [
+                    {
+                      "rel": "self",
+                      "href": "http://localhost:8080/vic/resources/merchants/8",
+                      "type": "application/json"
+                    },
+                    {
+                      "rel": "edit",
+                      "href": "http://localhost:8080/vic/resources/merchants/8",
+                      "type": "application/json"
+                    },
+                    {
+                      "rel": "delete",
+                      "href": "http://localhost:8080/vic/resources/merchants/8",
+                      "type": "application/json"
+                    }
+                  ]
+                }
+              ],
+              "_links": [
+                {
+                  "rel": "next",
+                  "href": "http://localhost:8080/vic/resources/merchants?start=3&size=2",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "previous",
+                  "href": "http://localhost:8080/vic/resources/merchants?start=0&size=2",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "create",
+                  "href": "http://localhost:8080/vic/resources/merchants",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "self",
+                  "href": "http://localhost:8080/vic/resources/merchants",
+                  "type": "application/json"
+                }
+              ]
+            }
+
+
+### Create a Merchant [POST]
+At succesfull creation a simplified entity is returned as payload and the URI to the full resource is given in the location header.
+
+The payload for the request is detailed in the table below.
+
+Element | Required | Type | Details | 
+--------|----------|------|---------|
+`type` | yes | enum | possible values: `BAKERY`
+`officialName` | yes | string |
+`commercialName` | yes | string |
+`vatNumber` | yes | string |
+`lang` | yes | enum | possible values: `NL`, `FR`, `DE`
+`currency` | yes | enum | possible values: `EURO`
+`contactInfo` | yes | object |
+`contactInfo.telephone` | yes | string |
+`contactInfo.fax` | no | string |
+`contactInfo.email` | no | string |
+`contactInfo.twitter` | no | string |
+`contactInfo.facebook` | no | string |
+`contactInfo.address` | yes | object |
+`contactInfo.address.street` | yes | string |
+`contactInfo.address.number` | yes | string |
+`contactInfo.address.zipCode` | yes | string |
+`contactInfo.address.municipality` | yes | string |
+`contactInfo.address.country` | yes | enum | possible values: `BE`
+        
++ Request
+
+    [Individual Merchant][]
+
++ Response 201 (application/json)
+
+    + Headers
+            
+            Location: http<s>://<host>/vic/resources/merchants/10
+
+    + Body
+    
+            {
+              "content": {
+                "id": 10,
+                "officialName": "official name",
+                "commercialName": "commercialName",
+                "address": {
+                  "zipCode": "zip",
+                  "municipality": "municipality"
+                }
+              },
+              "_links": [
+                {
+                  "rel": "self",
+                  "href": "http://localhost:8080/vic/resources/merchants/10",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "list",
+                  "href": "http://localhost:8080/vic/resources/merchants",
+                  "type": "application/json"
+                }
+              ]
+            }
