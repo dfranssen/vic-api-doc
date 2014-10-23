@@ -192,10 +192,10 @@ See the *Create a Merchant* documentation section for the request payload detail
 ## Merchants Collection [/merchants{?start,size}]
 
 ### List all Merchants [GET]
-This will return a subset of the merchant info. The full details can be retrieved via the id of each merchant (see Retrieve a Merchant operation).
-Pagination can be applied via the query parameters `start`and `size`.
+This will return a list of merchants (a subset of merchant data is returned, the full details can be retrieved via the id of each merchant; see Retrieve a Merchant operation).
 
-The response will have optionally `previous` and/or `next` links in the `_links` section, depending on the number of results and the given query parameters in the request.
+The response will have optionally `previous` and/or `next` links in the `_links` section, depending on the number of results and the given query parameters in the request (Pagination can be applied via the query parameters `start`and `size`).
+Furthermore the fields `count_returned` and `count_total` informs about the number of elements returned by this request and how much there are in total.
 
 + Parameters
     + start (optional, number, `10`) ... Numeric `start` indiating the offset in the result set. Default is 0
@@ -282,10 +282,12 @@ The response will have optionally `previous` and/or `next` links in the `_links`
                 },
                 {
                   "rel": "self",
-                  "href": "http://localhost:8080/vic/resources/merchants",
+                  "href": "http://localhost:8080/vic/resources/merchants?start=1&size=2",
                   "type": "application/json"
                 }
-              ]
+              ],
+              "count_returned": 2,
+              "count_total": 123
             }
 
 
