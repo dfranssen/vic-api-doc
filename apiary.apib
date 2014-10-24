@@ -353,10 +353,10 @@ Element | Required | Type | Details |
               ]
             }
 
-# Group Stores
+# Group Merchant Stores
 This is listed as a seperate group for readability, but the store resource is in fact a subresource of Merchant.
 
-## Individual Store [/merchants/{mid}/stores/{id}]
+## Individual Store of a Merchant [/merchants/{mid}/stores/{id}]
 A single Store resource of a Merchant to operate with.
 
 + Parameters
@@ -387,7 +387,7 @@ A single Store resource of a Merchant to operate with.
         }
     ```
 
-### Retrieve a Store [GET]
+### Retrieve a Store of a Merchant [GET]
 + Response 200 (application/json)
 
     + Body
@@ -438,12 +438,12 @@ A single Store resource of a Merchant to operate with.
               ]
             }
             
-### Update a Store [PUT]
-See the *Create a Store* documentation section for the request payload details.
+### Update a Store of a Merchant [PUT]
+See the *Create a Store for a Merchant* documentation section for the request payload details.
 
 + Request
 
-    [Individual Store][]
+    [Individual Store of a Merchant][]
 
 + Response 204 (application/json)
 
@@ -451,7 +451,7 @@ See the *Create a Store* documentation section for the request payload details.
     
             Link: <http<s>://<host>/vic/resources/merchants/1/stores/1>;rel="self", <http<s>://<host>/vic/resources/merchants/1/stores>; rel="list"
 
-### Delete a Store [DELETE]
+### Delete a Store of a Mechant [DELETE]
 
 
 + Response 204 (application/json)
@@ -460,13 +460,13 @@ See the *Create a Store* documentation section for the request payload details.
     
             Link: <http<s>://<host>/vic/resources/merchants/1/stores>; rel="list"
 
-## Stores Collection [/merchants/{mid}/stores{?start,size}]
+## Stores Collection of a Merchant [/merchants/{mid}/stores{?start,size}]
 
 + Parameters
     + mid (required, number, `1`) ... Numeric `id` of the Merchant to perform action with. Has example value.
     
 ### List all Stores [GET]
-This will return a list of stores of a particular Merchant (a subset of store data is returned, the full details can be retrieved via the id of each store; see *Retrieve a Store* operation).
+This will return a list of stores of a particular Merchant (a subset of store data is returned, the full details can be retrieved via the id of each store; see *Retrieve a Store of a Merchant* operation).
 
 The response will have optionally `previous` and/or `next` links in the `_links` section, depending on the number of results and the given query parameters in the request (Pagination can be applied via the query parameters `start`and `size`).
 Furthermore the fields `count_returned` and `count_total` informs about the number of elements returned by this request and how much there are in total.
@@ -537,7 +537,7 @@ Furthermore the fields `count_returned` and `count_total` informs about the numb
             }
 
 
-### Create a Store [POST]
+### Create a Store for a Merchant [POST]
 At succesfull creation of a Store for that Merchant a simplified entity is returned as payload and the URI to the full resource is given in the location header.
 
 The payload for the request is detailed in the table below.
@@ -562,7 +562,7 @@ Element | Required | Type | Details |
         
 + Request
 
-    [Individual Store][]
+    [Individual Store of a Merchant][]
 
 + Response 201 (application/json)
 
