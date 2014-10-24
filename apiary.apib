@@ -78,7 +78,7 @@ HTTP code | Condition
 `410` | Will be returned if a specific resource has been soft-deleted and is not available for the requested opertation
 
 # Group Merchants
-Merchant related resources of the **Merchants API**
+Top level resource for merchants, stores, products, orders, etc.
 
 ## Individual Merchant [/merchants/{id}]
 A single Merchant resource to operate with.
@@ -192,7 +192,7 @@ See the *Create a Merchant* documentation section for the request payload detail
 ## Merchants Collection [/merchants{?start,size}]
 
 ### List all Merchants [GET]
-This will return a list of merchants (a subset of merchant data is returned, the full details can be retrieved via the id of each merchant; see Retrieve a Merchant operation).
+This will return a list of merchants (a subset of merchant data is returned, the full details can be retrieved via the id of each merchant; see *Retrieve a Merchant* operation).
 
 The response will have optionally `previous` and/or `next` links in the `_links` section, depending on the number of results and the given query parameters in the request (Pagination can be applied via the query parameters `start`and `size`).
 Furthermore the fields `count_returned` and `count_total` informs about the number of elements returned by this request and how much there are in total.
@@ -348,6 +348,249 @@ Element | Required | Type | Details |
                 {
                   "rel": "list",
                   "href": "http://localhost:8080/vic/resources/merchants",
+                  "type": "application/json"
+                }
+              ]
+            }
+
+# Group Stores
+This is listed as a seperate group for readability, but the store resource is in fact a subresource of Merchant.
+
+## Individual Store [/merchants/{mid}/stores/{id}]
+A single Store resource of a Merchant to operate with.
+
++ Parameters
+    + mid (required, number, `1`) ... Numeric `id` of the Merchant to perform action with. Has example value.
+    + id (required, number, `1`) ... Numeric `id` of the Store to perform action with. Has example value.
+
++ Model (application/json)
+
+    ```js
+        {
+          "identifier": "identifier",
+          "commercialName": "commercial name",
+          "contactInfo": {
+            "address": {
+              "street": "street",
+              "number": "nbr",
+              "zipCode": "zip",
+              "municipality": "municipality",
+              "country": "BE"
+            },
+            "telephone": "tel",
+            "fax": "fax",
+            "email": "email",
+            "twitter": "twitter",
+            "facebook": "facebook"
+          },
+          "lang": "NL"
+        }
+    ```
+
+### Retrieve a Store [GET]
++ Response 200 (application/json)
+
+    + Body
+
+            {
+              "content": {
+                "id": 3,
+                "identifier": "identifier",
+                "commercialName": "commercialName",
+                "contactInfo": {
+                  "id": 4,
+                  "address": {
+                    "street": "street",
+                    "number": "nbr",
+                    "zipCode": "zip",
+                    "municipality": "municipality",
+                    "country": "BE"
+                  },
+                  "telephone": "tel",
+                  "fax": "fax",
+                  "email": "email",
+                  "twitter": "twitter",
+                  "facebook": "facebook"
+                },
+                "lang": "NL"
+              },
+              "_links": [
+                {
+                  "rel": "self",
+                  "href": "http://localhost:8080/vic/resources/merchants/1/stores/3",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "edit",
+                  "href": "http://localhost:8080/vic/resources/merchants/1/stores/3",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "delete",
+                  "href": "http://localhost:8080/vic/resources/merchants/1/stores/3",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "list",
+                  "href": "http://localhost:8080/vic/resources/merchants/1/stores",
+                  "type": "application/json"
+                }
+              ]
+            }
+            
+### Update a Store [PUT]
+See the *Create a Store* documentation section for the request payload details.
+
++ Request
+
+    [Individual Store][]
+
++ Response 204 (application/json)
+
+    + Headers
+    
+            Link: <http<s>://<host>/vic/resources/merchants/1/stores/1>;rel="self", <http<s>://<host>/vic/resources/merchants/1/stores>; rel="list"
+
+### Delete a Store [DELETE]
+
+
++ Response 204 (application/json)
+
+    + Headers
+    
+            Link: <http<s>://<host>/vic/resources/merchants/1/stores>; rel="list"
+
+## Stores Collection [/merchants/{mid}/stores{?start,size}]
+
++ Parameters
+    + mid (required, number, `1`) ... Numeric `id` of the Merchant to perform action with. Has example value.
+    
+### List all Stores [GET]
+This will return a list of stores of a particular Merchant (a subset of store data is returned, the full details can be retrieved via the id of each store; see *Retrieve a Store* operation).
+
+The response will have optionally `previous` and/or `next` links in the `_links` section, depending on the number of results and the given query parameters in the request (Pagination can be applied via the query parameters `start`and `size`).
+Furthermore the fields `count_returned` and `count_total` informs about the number of elements returned by this request and how much there are in total.
+
++ Parameters
+    + start (optional, number, `10`) ... Numeric `start` indiating the offset in the result set. Default is 0
+    + size (optional, number, `10`) ... Numeric `size` indicating the number of elements to be returned. Default is 10
+
++ Response 200 (application/json)
+    
+    + Body
+        
+            {
+              "content": [
+                {
+                  "content": {
+                    "id": 3,
+                    "identifier": "identifier",
+                    "commercialName": "commercialName",
+                    "address": {
+                      "zipCode": "zip",
+                      "municipality": "municipality"
+                    }
+                  },
+                  "_links": [
+                    {
+                      "rel": "self",
+                      "href": "http://localhost:8080/vic/resources/merchants/1/stores/3",
+                      "type": "application/json"
+                    },
+                    {
+                      "rel": "edit",
+                      "href": "http://localhost:8080/vic/resources/merchants/1/stores/3",
+                      "type": "application/json"
+                    },
+                    {
+                      "rel": "delete",
+                      "href": "http://localhost:8080/vic/resources/merchants/1/stores/3",
+                      "type": "application/json"
+                    }
+                  ]
+                }
+              ],
+              "_links": [
+                {
+                  "rel": "next",
+                  "href": "http://localhost:8080/vic/resources/merchants/1/stores?start=3&size=2",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "previous",
+                  "href": "http://localhost:8080/vic/resources/merchants/1/stores?start=0&size=2",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "create",
+                  "href": "http://localhost:8080/vic/resources/merchants/1/stores",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "self",
+                  "href": "http://localhost:8080/vic/resources/merchants/1/stores?start=1&size=2",
+                  "type": "application/json"
+                }
+              ],
+              "count_returned": 2,
+              "count_total": 123
+            }
+
+
+### Create a Store [POST]
+At succesfull creation of a Store for that Merchant a simplified entity is returned as payload and the URI to the full resource is given in the location header.
+
+The payload for the request is detailed in the table below.
+
+Element | Required | Type | Details | 
+--------|----------|------|---------|
+`identifier` | no | string |
+`commercialName` | yes | string |
+`lang` | yes | enum | possible values: `NL`, `FR`, `DE`
+`contactInfo` | yes | object |
+`contactInfo.telephone` | yes | string |
+`contactInfo.fax` | no | string |
+`contactInfo.email` | no | string |
+`contactInfo.twitter` | no | string |
+`contactInfo.facebook` | no | string |
+`contactInfo.address` | yes | object |
+`contactInfo.address.street` | yes | string |
+`contactInfo.address.number` | yes | string |
+`contactInfo.address.zipCode` | yes | string |
+`contactInfo.address.municipality` | yes | string |
+`contactInfo.address.country` | yes | enum | possible values: `BE`
+        
++ Request
+
+    [Individual Store][]
+
++ Response 201 (application/json)
+
+    + Headers
+            
+            Location: http<s>://<host>/vic/resources/merchants/10/store/5
+
+    + Body
+    
+            {
+              "content": {
+                "id": 10,
+                "identifier": "identifier",
+                "commercialName": "commercialName",
+                "address": {
+                  "zipCode": "zip",
+                  "municipality": "municipality"
+                }
+              },
+              "_links": [
+                {
+                  "rel": "self",
+                  "href": "http://localhost:8080/vic/resources/merchants/10/stores/5",
+                  "type": "application/json"
+                },
+                {
+                  "rel": "list",
+                  "href": "http://localhost:8080/vic/resources/merchants/10/stores",
                   "type": "application/json"
                 }
               ]
