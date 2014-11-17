@@ -76,6 +76,7 @@ HTTP code | Condition
 `204` | Will be returned for an update/delete operation (empty body, links in headers)
 `404` | Will be returned if a specific resource cannot be found. For list resources however a `HTTP 200` with an empty list will be returned if no data can be found
 `410` | Will be returned if a specific resource has been soft-deleted and is not available for the requested opertation
+`500` | Will be returned if an internal server error occurred. The following additional headers will be set: `X-Error-Code`=`SYS_99999` and `X-Error-Message` will contain the cause ot this error.
 
 # Group Merchants
 Top level resource for merchants, stores, products, orders, etc.
